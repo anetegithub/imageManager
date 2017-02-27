@@ -10,14 +10,15 @@
         return response;
     }
 
-    public request<T>(url: string, data?: any): JQueryPromise<T> {        
+    public request<T>(url: string, data?: any, httpMethod?: string, contentType?: string): JQueryPromise<T> {
         var response = $.ajax({
             url: url,
-            type: 'post',
+            type: httpMethod || 'post',
             data: data,
             beforeSend: function (xhr, settings) { console.warn("authorization doesn't exists!"); },
-            error: (xhr, z, u) => { this.errorCatch(xhr); }
-        });        
+            error: (xhr, z, u) => { this.errorCatch(xhr); },
+            contentType: contentType || "application/x-www-form-urlencoded"
+        });
         return response;
     }
 }

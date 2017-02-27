@@ -1,8 +1,8 @@
 ﻿abstract class Binding extends Request {
 
     constructor(view: JQuery) {
-        super((xhr) => { });
-        debugger;
+        super(Binding.bindingXhrError);
+        
         view.find('[data-binding-field]').each((i, v) => {
             var $jE = $(v);
             var field = $jE.attr('data-binding-field');
@@ -31,6 +31,10 @@
         });
     }
 
+    static bindingXhrError(xhr:JQueryXHR) {
+        console.log(xhr.responseText);
+    }
+
     execute() {
         var fieldUrl = this.fieldUrlCollection();
         $.each(fieldUrl, (i, v) => {
@@ -39,7 +43,8 @@
     }
 
     private fieldBind(binding: BindingField) {
-        var promise = this.request(binding.url, binding.requestParams);
+        
+        var promise = this.request(binding.url, binding.requestParams, binding.httpMethod,binding.contentType);
         promise.then(
             (x) => {
                 if (binding.datahandler != null)
@@ -55,17 +60,21 @@
 }
 
 class BindingField {
+    httpMethod: string;
     field: string;
     url: string;
     requestParams: any;
     datahandler: ($this: Binding, data: any) => void;
+    contentType: string;
 
     public constructor(
         fields?: {
             field?: string,
             url?: string,
             datahandler?: ($this: Binding, data: any) => void,
-            requestParams?: any
+            requestParams?: any,
+            httpMethod?: string,
+            contentType?: string;
         }) {
         if (fields) Object.assign(this, fields);
     }

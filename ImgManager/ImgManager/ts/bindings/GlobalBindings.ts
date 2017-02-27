@@ -8,14 +8,20 @@
         window['globalBindings'] = bindings;
     }
 
-    static bind(binding: Binding) {
+    static bind<T extends Binding>(binding: T) {        
         GlobalBindings.globalBindings.push(binding);
     }
     static unbind<T extends Binding>(ctor: { new (...args: any[]): T }) {
+        var binding = GlobalBindings.getBinding(ctor);
+        if (binding != null)
+            GlobalBindings.setGlobal = GlobalBindings.globalBindings.remove(binding);
+    }
+    static getBinding<T extends Binding>(ctor: { new (...args: any[]): T }): any {
         var enumerable = GlobalBindings.globalBindings
             .filter(x => x instanceof ctor);
         if (enumerable.length > 0)
-            GlobalBindings.setGlobal = GlobalBindings.globalBindings.remove(enumerable[0]);
+            return enumerable[0];
+        return null;
     }
 
     static execute<T extends Binding>();

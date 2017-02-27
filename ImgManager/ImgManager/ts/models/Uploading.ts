@@ -1,17 +1,17 @@
 ﻿class Uploading extends ViewModel {
-
+    
     modelValidation(): Validator {
         return new Validator('Uploading', x => { return this.validFiles(); }, 'Not suitable files! Not more then 9 picture files!');
     }
     submit() { this.upload(this); }
 
     back($this) {
-        debugger;
+        
         Application.MainScreen();
     }
 
     validFiles(): boolean {
-        debugger;
+        
 
         var valid = true;
         var validExtensions = [
@@ -38,7 +38,7 @@
     async upload($this) {
         var uploaded = await ($this as Uploading).requestXHR<UploadedImages>($.ajax({
             url: 'api/images/create',
-            type: 'POST',
+            type: 'PUT',
             data: new FormData($('form')[0] as HTMLFormElement),
             cache: false,
             contentType: false,
@@ -47,7 +47,7 @@
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
                     myXhr.upload.addEventListener('progress', function (e) {
-                        debugger;
+                        
                         if (e.lengthComputable) {
                             $('.determinate').css('width', ((e.loaded / e.total) * 100).toString() + "%");
                         }

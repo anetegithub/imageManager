@@ -1,6 +1,6 @@
 ﻿abstract class HtmlPusher {
-    pushOnScreen(html: JQuery, attach: AttachType) {
-        var target = $('.screen');
+    pushOnScreen(html: JQuery, attach: AttachType, jqueryTarget?: JQuery) {
+        var target = jqueryTarget || $('.screen');
         switch (attach) {
             case AttachType.After: target.after(html); break;
             case AttachType.Before: target.before(html); break;

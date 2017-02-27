@@ -8,7 +8,20 @@
 <div data-binding-field="image-grid" data-binding-stage="html"></div>
 <hr />
 <div class="row">
-    <div class="col offset-m9 m3 s12">
-        <button class="btn fullsize" type="submit">Go to uploading</button>
+    <div class="col m12 s12 paging">
+    </div>
+</div>
+<div class="row">
+    <div class="col m4 s12">
+        <button class="btn fullsize" data-model-action="sort" data-model-param-sort="ascending">Sort by created acsending</button>
+    </div>
+    <div class="col m4 s12">
+        <button class="btn fullsize" data-model-action="sort" data-model-param-sort="descending">Sort by created descending</button>
+    </div>
+    <div class="col m2 s12">
+        <button class="btn fullsize" type="submit">Upload</button>
+    </div>
+    <div class="col m2 s12">
+        <button class="btn fullsize" data-model-action="changeStorage">Storage</button>
     </div>
 </div>

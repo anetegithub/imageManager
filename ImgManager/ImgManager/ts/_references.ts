@@ -20,4 +20,6 @@
 /// <reference path="contracts/sortingcontract.ts" />
 /// <reference path="contracts/imageinfo.ts" />
 /// <reference path="contracts/uploadedimages.ts" />
+/// <reference path="models/changestorage.ts" />
+/// <reference path="models/paging.ts" />
 /// <reference path="app.ts" />

@@ -25,8 +25,8 @@
         return request;
     }
 
-    public request<T>(url: string, data?: any): JQueryPromise<T> {
-        var request = super.request(url, data)        
+    public request<T>(url: string, data?: any,httpMethod?:string): JQueryPromise<T> {
+        var request = super.request(url, data, httpMethod);
         request.done(() => {
             GlobalBindings.execute();
         });

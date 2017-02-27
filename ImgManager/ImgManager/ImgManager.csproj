@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ImgManager</RootNamespace>
     <AssemblyName>ImgManager</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -22,6 +22,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -57,11 +59,8 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
@@ -103,6 +102,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -161,7 +161,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="js\jquery-3.1.1.intellisense.js" />
-    <Content Include="images\error.PNG" />
+    <Content Include="images\error.png" />
     <Content Include="images\example.png" />
     <Content Include="js\jquery-3.1.1.js" />
     <Content Include="js\_references.js" />
@@ -179,6 +179,8 @@
     <Content Include="views\templates\view.cshtml" />
     <Content Include="views\templates\uploading.cshtml" />
     <Content Include="views\templates\image-grid.cshtml" />
+    <Content Include="views\templates\paging.cshtml" />
+    <Content Include="views\templates\storage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -224,6 +226,8 @@
     <TypeScriptCompile Include="ts\interfaces\jqueryPromise.ts" />
     <TypeScriptCompile Include="ts\interfaces\Materialize.ts" />
     <TypeScriptCompile Include="ts\interfaces\string.ts" />
+    <TypeScriptCompile Include="ts\models\Paging.ts" />
+    <TypeScriptCompile Include="ts\models\ChangeStorage.ts" />
     <TypeScriptCompile Include="ts\models\Uploading.ts" />
     <TypeScriptCompile Include="ts\models\Uploaded.ts" />
     <TypeScriptCompile Include="ts\typings\jquery\jquery.d.ts" />

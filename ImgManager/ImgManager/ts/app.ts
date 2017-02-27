@@ -10,6 +10,9 @@
     public async UploadingScreen() {
         await this.setInterface(Uploading, 'uploading');
     }
+    public async StorageScreen() {
+        await this.setInterface(ChangeStorage, 'storage');
+    }
 
     private async setInterface<T extends ViewModel>(ctor: { new (...args: any[]): T }, template: string) {
         var $template = $(await this.fromTemplate(template));

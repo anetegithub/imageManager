@@ -50,8 +50,8 @@ class JQueryPromise {
     }
 }
 class HtmlPusher {
-    pushOnScreen(html, attach) {
-        var target = $('.screen');
+    pushOnScreen(html, attach, jqueryTarget) {
+        var target = jqueryTarget || $('.screen');
         switch (attach) {
             case AttachType.After:
                 target.after(html);
@@ -85,21 +85,21 @@ class Request extends HtmlPusher {
         var response = xhr;
         return response;
     }
-    request(url, data) {
+    request(url, data, httpMethod, contentType) {
         var response = $.ajax({
             url: url,
-            type: 'post',
+            type: httpMethod || 'post',
             data: data,
             beforeSend: function (xhr, settings) { console.warn("authorization doesn't exists!"); },
-            error: (xhr, z, u) => { this.errorCatch(xhr); }
+            error: (xhr, z, u) => { this.errorCatch(xhr); },
+            contentType: contentType || "application/x-www-form-urlencoded"
         });
         return response;
     }
 }
 class Binding extends Request {
     constructor(view) {
-        super((xhr) => { });
-        debugger;
+        super(Binding.bindingXhrError);
         view.find('[data-binding-field]').each((i, v) => {
             var $jE = $(v);
             var field = $jE.attr('data-binding-field');
@@ -125,6 +125,9 @@ class Binding extends Request {
             jB.removeAttr('data-binding-action');
         });
     }
+    static bindingXhrError(xhr) {
+        console.log(xhr.responseText);
+    }
     execute() {
         var fieldUrl = this.fieldUrlCollection();
         $.each(fieldUrl, (i, v) => {
@@ -132,7 +135,7 @@ class Binding extends Request {
         });
     }
     fieldBind(binding) {
-        var promise = this.request(binding.url, binding.requestParams);
+        var promise = this.request(binding.url, binding.requestParams, binding.httpMethod, binding.contentType);
         promise.then((x) => {
             if (binding.datahandler != null)
                 binding.datahandler(this, x);
@@ -162,10 +165,16 @@ class GlobalBindings {
         GlobalBindings.globalBindings.push(binding);
     }
     static unbind(ctor) {
+        var binding = GlobalBindings.getBinding(ctor);
+        if (binding != null)
+            GlobalBindings.setGlobal = GlobalBindings.globalBindings.remove(binding);
+    }
+    static getBinding(ctor) {
         var enumerable = GlobalBindings.globalBindings
             .filter(x => x instanceof ctor);
         if (enumerable.length > 0)
-            GlobalBindings.setGlobal = GlobalBindings.globalBindings.remove(enumerable[0]);
+            return enumerable[0];
+        return null;
     }
     static execute(...args) {
         let executable = GlobalBindings.globalBindings;
@@ -199,8 +208,8 @@ class ServerLinked extends Request {
         });
         return request;
     }
-    request(url, data) {
-        var request = super.request(url, data);
+    request(url, data, httpMethod) {
+        var request = super.request(url, data, httpMethod);
         request.done(() => {
             GlobalBindings.execute();
         });
@@ -245,35 +254,44 @@ class UploadedImagesBinding extends Binding {
                 field: 'image-grid',
                 url: '/api/images/read/',
                 datahandler: handler,
-                requestParams: this.Contract
+                requestParams: JSON.stringify(this.Contract),
+                contentType: 'application/json'
             })
         ];
     }
-    increment() {
-        this.Contract.page++;
-        this.execute();
-    }
-    decrement() {
-        this.Contract.page--;
-        this.execute();
-    }
-    imageGridHandler($this, data) {
+    imageGridHandler($this, uploaded) {
         return __awaiter(this, void 0, void 0, function* () {
-            var html = $();
-            //for (let i = 0; i < data.length; i++) {
-            //    var transaction = data[i];
-            //    var template = await $this.request<string>('/templates/get/', { name: 'TransactionHistory' });
-            //    template = template.replace('{{Operation}}', transaction.operation == 0 ? "Debit" : "Credit");
-            //    template = template.replace('{{From/To}}', transaction.operation == 0 ? "To" : "From");
-            //    template = template.replace('{{Person}}', transaction.UserName);
-            //    template = template.replace('{{OperationSign}}', transaction.operation == 0 ? "-" : "+");
-            //    template = template.replace('{{PW}}', transaction.amount);
-            //    template = template.replace('{{When}}', transaction.when);
-            //    template = template.replace('{{Total}}', transaction.total);
-            //    html = html.add($(template));
-            //}
-            //debugger;
-            $this["usertransactions"] = html.wrapAll($("<div>")).parent().html();
+            var template = yield $this.request('/interface/template/', { name: 'image-grid' });
+            for (let i = 0; i < 9; i++) {
+                var replacedBy;
+                if (uploaded.data[i] != undefined) {
+                    var imgInfo = uploaded.data[i];
+                    replacedBy = '<div class="card ' + (imgInfo.itsNew ? 'glow' : '') + '">\
+                    <div class="card-image">\
+                        <img src="' + imgInfo.VirtualPath + '">\
+                        <span class="card-title">' + imgInfo.Name + '</span>\
+                    </div>\
+                </div>';
+                }
+                else
+                    replacedBy = '';
+                template = template.replace('{{' + i + '}}', replacedBy);
+            }
+            yield $this.pagination($this, uploaded);
+            $this["image-grid"] = $(template).wrapAll($("<div>")).parent().html();
+        });
+    }
+    pagination($this, uploaded) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var template = yield $this.request('/interface/template/', { name: 'paging' });
+            let ul = '';
+            var total = Math.fround(uploaded.total / $this.Contract.pageSize) + 1;
+            for (let i = 1; i < total; i++) {
+                ul += '<li data-model-submit="true" data-model-action="turn" data-model-param-turn="' + i + '" class="waves-effect ' + ($this.Contract.page == i ? 'active' : '') + '"><a href="#!">' + i + '</a></li>';
+            }
+            var $template = $(template.replace('{{pagination}}', ul));
+            debugger;
+            new Paging($template, total);
         });
     }
 }
@@ -292,7 +310,7 @@ class ServerTimeBinding extends Binding {
     }
 }
 class ViewModel extends TemplateLoader {
-    constructor(view) {
+    constructor(view, target) {
         super();
         view.filter('input')
             .add(view.find('input'))
@@ -322,25 +340,30 @@ class ViewModel extends TemplateLoader {
                 jE.addClass('valid');
             });
         });
-        view.filter('button:not([type="submit"])')
-            .add(view.find('button:not([type="submit"])'))
+        view.filter('[data-model-action]')
+            .add(view.find('[data-model-action]'))
             .each((i, e) => {
             var jB = $(e);
             var attr = jB.attr('data-model-action');
             if (attr != null) {
                 var action = this[jB.attr('data-model-action')];
+                debugger;
+                var params = jB.attr('data-model-param-' + jB.attr('data-model-action'));
                 if (action != null)
                     jB.click(x => {
-                        action(this);
+                        action(this, params);
                     });
                 jB.removeAttr('data-model-action');
+                jB.removeAttr('data-model-param-' + jB.attr('data-model-action'));
             }
         });
         var sBtn = view.find('[type="submit"]');
         this.submitUrl = sBtn.attr('data-controller-action');
         sBtn.removeAttr('data-controller-action');
-        sBtn.click(x => this.submitting());
-        this.pushOnScreen(view, AttachType.Inside);
+        sBtn.add(view.find('[data-model-submit]'))
+            .removeAttr('data-model-submit')
+            .click(x => this.submitting());
+        this.pushOnScreen(view, AttachType.Inside, target);
         //screenViewModel = this;
     }
     set_validation(validator) {
@@ -351,7 +374,8 @@ class ViewModel extends TemplateLoader {
             var validator = this.modelValidation();
             if (validator.validating_function(this)) {
                 this.beforeSubmit();
-                var response = yield this.request(this.submitUrl, this);
+                debugger;
+                var response = yield this.request(this.submitUrl, this, this.httpMethod());
                 this.submit(response);
                 this.afterSubmit();
             }
@@ -361,6 +385,7 @@ class ViewModel extends TemplateLoader {
     }
     beforeSubmit() { }
     afterSubmit() { }
+    httpMethod() { return 'POST'; }
 }
 class Validator {
     constructor(field, validation_function, error, success) {
@@ -374,6 +399,7 @@ class Validator {
 class Uploaded extends ViewModel {
     constructor(view) {
         super(view);
+        GlobalBindings.unbind(UploadedImagesBinding);
         GlobalBindings.bind(new UploadedImagesBinding());
         GlobalBindings.execute(UploadedImagesBinding);
     }
@@ -385,6 +411,21 @@ class Uploaded extends ViewModel {
     }
     submit() {
         this.goToUploading(this);
+    }
+    get binding() {
+        return GlobalBindings.getBinding(UploadedImagesBinding);
+    }
+    get contract() {
+        return this.binding.Contract;
+    }
+    sort($this, order) {
+        debugger;
+        $this.contract.property = 'Created';
+        $this.contract.order = order == "ascending" ? Order.Ascending : Order.Descending;
+        $this.binding.execute();
+    }
+    changeStorage() {
+        Application.StorageScreen();
     }
     goToUploading($this) {
         $this.fromTemplate('uploading').then(x => {
@@ -399,11 +440,9 @@ class Uploading extends ViewModel {
     }
     submit() { this.upload(this); }
     back($this) {
-        debugger;
         Application.MainScreen();
     }
     validFiles() {
-        debugger;
         var valid = true;
         var validExtensions = [
             "jpg",
@@ -426,7 +465,7 @@ class Uploading extends ViewModel {
         return __awaiter(this, void 0, void 0, function* () {
             var uploaded = yield $this.requestXHR($.ajax({
                 url: 'api/images/create',
-                type: 'POST',
+                type: 'PUT',
                 data: new FormData($('form')[0]),
                 cache: false,
                 contentType: false,
@@ -435,7 +474,6 @@ class Uploading extends ViewModel {
                     var myXhr = $.ajaxSettings.xhr();
                     if (myXhr.upload) {
                         myXhr.upload.addEventListener('progress', function (e) {
-                            debugger;
                             if (e.lengthComputable) {
                                 $('.determinate').css('width', ((e.loaded / e.total) * 100).toString() + "%");
                             }
@@ -481,6 +519,54 @@ class ImageInfo {
 }
 class UploadedImages {
 }
+class ChangeStorage extends ViewModel {
+    modelValidation() {
+        return new Validator('Storage', x => { return true; }, 'Not enough pages!');
+    }
+    submit() { Application.MainScreen(); }
+    back($this) {
+        $this.submit();
+    }
+    httpMethod() {
+        return 'GET';
+    }
+}
+class Paging extends ViewModel {
+    constructor(view, total) {
+        super(view, $('.paging'));
+        this.totalPages = total;
+    }
+    get contract() {
+        return GlobalBindings.getBinding(UploadedImagesBinding).Contract;
+    }
+    modelValidation() {
+        return new Validator('Paging', x => { return this.validatePaging(x); }, 'Not enough pages!');
+    }
+    submit() { }
+    validatePaging(x) {
+        if (x.contract.page <= 0) {
+            x.contract.page = 1;
+            return false;
+        }
+        if (x.contract.page > this.totalPages) {
+            x.contract.page = this.totalPages;
+            return false;
+        }
+        return true;
+    }
+    turn($this, page) {
+        $this.contract.page = page;
+        $this.submit();
+    }
+    increment($this) {
+        $this.contract.page++;
+        $this.submit();
+    }
+    decrement($this) {
+        $this.contract.page--;
+        $this.submit();
+    }
+}
 class App extends TemplateLoader {
     start() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -496,6 +582,11 @@ class App extends TemplateLoader {
     UploadingScreen() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.setInterface(Uploading, 'uploading');
+        });
+    }
+    StorageScreen() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.setInterface(ChangeStorage, 'storage');
         });
     }
     setInterface(ctor, template) {
@@ -529,5 +620,7 @@ Application.start();
 /// <reference path="contracts/sortingcontract.ts" />
 /// <reference path="contracts/imageinfo.ts" />
 /// <reference path="contracts/uploadedimages.ts" />
+/// <reference path="models/changestorage.ts" />
+/// <reference path="models/paging.ts" />
 /// <reference path="app.ts" />
 //# sourceMappingURL=application.js.map

@@ -8,3 +8,6 @@
 nav {
     background-color:#26a634;
 }
+.glow {
+    box-shadow: 0 4px 8px 0 rgba(99, 255, 4, 0.40), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

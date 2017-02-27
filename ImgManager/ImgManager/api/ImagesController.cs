@@ -18,8 +18,10 @@ namespace ImgManager.api
 {
     public class ImagesController : ApiController
     {
-        [HttpGet]
-        public ImagesUploaded Read(SortingContract sorting)
+        public static string FolderPath = "images";
+
+        [HttpPost]
+        public ImagesUploaded Read([FromBody]SortingContract sorting)
         {
             var vm = new ImagesUploaded();
 
@@ -35,19 +37,19 @@ namespace ImgManager.api
 
                     query = query.OrderBy(orderQuery);
                 }
+                vm.total = query.Count();
 
                 //paging
                 query = query.Skip(sorting.pageSize * (sorting.page - 1))
                     .Take(sorting.pageSize);
                 vm.data = query.ToArray();
-                vm.total = vm.data.Count();
 
                 return
                     vm;
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<ImagesUploaded> Create()
         {
             var vm = new ImagesUploaded();
@@ -68,14 +70,14 @@ namespace ImgManager.api
                     var imageInfo = new ImageInfo()
                     {
                         Created = DateTime.Now,
-                        Name = Path.GetFileNameWithoutExtension(filename),
+                        Name = Path.GetFileName(filename),
                         Size = buffer.Count(),
-                        VirtualPath = "/images/" + filename,
-                        PhysicalPath = HttpContext.Current.Server.MapPath("/images/{0}".f(filename))
+                        VirtualPath = "/{0}/{1}".f(FolderPath, filename),
+                        PhysicalPath = HttpContext.Current.Server.MapPath("/{0}/{1}".f(FolderPath, filename))
                     };
 #if Azure
                     imageInfo.Size = 0;
-                    imageInfo.VirtualPath = "~/images/example.png";
+                    imageInfo.VirtualPath = "/images/example.png";
                     imageInfo.PhysicalPath = HttpContext.Current.Server.MapPath(imageInfo.VirtualPath);   
 #else
                     try
@@ -99,6 +101,25 @@ namespace ImgManager.api
             vm.total = vm.data.Count();
 
             return vm;
+        }
+
+        [HttpGet]
+        public bool Storage(String Path)
+        {
+            try
+            {
+                Directory.CreateDirectory(HttpContext.Current.Server.MapPath("/{0}".f(Path)));
+                ImagesController.FolderPath = Path;
+
+                return true;
+            }
+            catch
+            {
+                Directory.CreateDirectory(HttpContext.Current.Server.MapPath("/{0}".f(Path)));
+                ImagesController.FolderPath = "images";
+
+                return false;
+            }
         }
     }
 }

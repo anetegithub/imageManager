@@ -13,5 +13,11 @@ namespace ImgManager.api
         {
             return DateTime.Now.ToString("HH:mm:ss");
         }
+
+        [HttpPatch]
+        public string PathStorage()
+        {
+            return ImagesController.FolderPath;
+        }
     }
 }

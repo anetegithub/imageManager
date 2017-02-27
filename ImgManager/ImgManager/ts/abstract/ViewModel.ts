@@ -4,7 +4,7 @@
         this[validator.field + "__validator"] = validator;
     }
 
-    constructor(view: JQuery) {
+    constructor(view: JQuery,target?:JQuery) {
         super();
         view.filter('input')
             .add(view.find('input'))
@@ -33,28 +33,34 @@
                 jE.addClass('valid');
             });
         });
-        view.filter('button:not([type="submit"])')
-            .add(view.find('button:not([type="submit"])'))
+        view.filter('[data-model-action]')
+            .add(view.find('[data-model-action]'))
             .each((i, e) => {
             var jB = $(e);
             var attr = jB.attr('data-model-action');
             if (attr != null) {
                 var action = this[jB.attr('data-model-action')];
+                debugger;
+                var params = jB.attr('data-model-param-' + jB.attr('data-model-action'));
                 if (action != null)
                     jB.click(x => {
-                        action(this);
+                        action(this, params);
                     });
                 jB.removeAttr('data-model-action');
+                jB.removeAttr('data-model-param-' + jB.attr('data-model-action'));
             }
         });
 
-        var sBtn = view.find('[type="submit"]');
+        var sBtn = view.find('[type="submit"]')
         this.submitUrl = sBtn.attr('data-controller-action');
         sBtn.removeAttr('data-controller-action');
-        sBtn.click(x => this.submitting());
+        sBtn.add(view.find('[data-model-submit]'))
+            .removeAttr('data-model-submit')
+            .click(x => this.submitting());
 
         this.pushOnScreen(view,
-            AttachType.Inside);
+            AttachType.Inside,
+            target);
 
         //screenViewModel = this;
     }
@@ -64,7 +70,8 @@
         var validator = this.modelValidation();      
         if (validator.validating_function(this)) {
             this.beforeSubmit();
-            var response = await this.request<any>(this.submitUrl, this);
+            debugger;
+            var response = await this.request<any>(this.submitUrl, this, this.httpMethod());
             this.submit(response);
             this.afterSubmit();
         }
@@ -74,6 +81,7 @@
     
     beforeSubmit() { }
     afterSubmit() { }
+    httpMethod(): string { return 'POST'; }
 
     abstract modelValidation(): Validator;
     abstract async submit(response: any);
