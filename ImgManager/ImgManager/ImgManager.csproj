@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -20,6 +21,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +49,10 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -122,68 +128,44 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Core">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Owin">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin">
-      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb">
-      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security">
-      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Facebook">
-      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies">
-      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth">
-      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Google">
-      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Twitter">
-      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
-      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="api\ImagesController.cs" />
+    <Compile Include="api\UtilsController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="contexts\ApplicationDbContext.cs" />
+    <Compile Include="contracts\SortingContract.cs" />
     <Compile Include="controllers\InterfaceController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="interfaces\ICRUDModel.cs" />
+    <Compile Include="interfaces\IRepository.cs" />
+    <Compile Include="Migrations\201702270810436_imagesinfo.cs" />
+    <Compile Include="Migrations\201702270810436_imagesinfo.Designer.cs">
+      <DependentUpon>201702270810436_imagesinfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="models\ImageInfo.cs" />
+    <Compile Include="models\Record.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="repositories\CRUDRepository.cs" />
+    <Compile Include="utility\Extensions.cs" />
+    <Compile Include="viewmodels\ImagesUploaded.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\custom.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="js\jquery-3.1.1.intellisense.js" />
+    <Content Include="images\error.PNG" />
+    <Content Include="images\example.png" />
     <Content Include="js\jquery-3.1.1.js" />
     <Content Include="js\_references.js" />
     <Content Include="css\materialize.css" />
-    <Content Include="css\materialize.min.css" />
     <Content Include="js\materialize.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -193,36 +175,13 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="views\Web.config" />
-    <Content Include="views\_ViewStart.cshtml" />
-    <Content Include="views\Shared\Error.cshtml" />
-    <Content Include="views\Shared\_Layout.cshtml" />
-    <Content Include="views\Home\About.cshtml" />
-    <Content Include="views\Home\Contact.cshtml" />
-    <Content Include="views\Home\Index.cshtml" />
-    <Content Include="views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="views\Account\ConfirmEmail.cshtml" />
-    <Content Include="views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="views\Account\ForgotPassword.cshtml" />
-    <Content Include="views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="views\Account\Login.cshtml" />
-    <Content Include="views\Account\Register.cshtml" />
-    <Content Include="views\Account\ResetPassword.cshtml" />
-    <Content Include="views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="views\Account\SendCode.cshtml" />
-    <Content Include="views\Account\VerifyCode.cshtml" />
-    <Content Include="views\Manage\AddPhoneNumber.cshtml" />
-    <Content Include="views\Manage\ChangePassword.cshtml" />
-    <Content Include="views\Manage\Index.cshtml" />
-    <Content Include="views\Manage\ManageLogins.cshtml" />
-    <Content Include="views\Manage\SetPassword.cshtml" />
-    <Content Include="views\Manage\VerifyPhoneNumber.cshtml" />
-    <Content Include="views\Shared\Lockout.cshtml" />
-    <Content Include="views\Shared\_LoginPartial.cshtml" />
+    <Content Include="views\Interface\Index.cshtml" />
+    <Content Include="views\templates\view.cshtml" />
+    <Content Include="views\templates\uploading.cshtml" />
+    <Content Include="views\templates\image-grid.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -247,11 +206,47 @@
     <Content Include="fonts\roboto\Roboto-Thin.woff" />
     <Content Include="fonts\roboto\Roboto-Thin.woff2" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="ts\abstract\HtmlPusher.ts" />
+    <TypeScriptCompile Include="ts\abstract\Request.ts" />
+    <TypeScriptCompile Include="ts\abstract\Binding.ts" />
+    <TypeScriptCompile Include="ts\abstract\ServerLinked.ts" />
+    <TypeScriptCompile Include="ts\abstract\TemplateLoader.ts" />
+    <TypeScriptCompile Include="ts\abstract\ValidationState.ts" />
+    <TypeScriptCompile Include="ts\abstract\ViewModel.ts" />
+    <TypeScriptCompile Include="ts\bindings\GlobalBindings.ts" />
+    <TypeScriptCompile Include="ts\bindings\ServerTimeBinding.ts" />
+    <TypeScriptCompile Include="ts\bindings\UploadedImagesBinding.ts" />
+    <TypeScriptCompile Include="ts\contracts\ImageInfo.ts" />
+    <TypeScriptCompile Include="ts\contracts\SortingContract.ts" />
+    <TypeScriptCompile Include="ts\contracts\UploadedImages.ts" />
+    <TypeScriptCompile Include="ts\interfaces\array.ts" />
+    <TypeScriptCompile Include="ts\interfaces\jqueryPromise.ts" />
+    <TypeScriptCompile Include="ts\interfaces\Materialize.ts" />
+    <TypeScriptCompile Include="ts\interfaces\string.ts" />
+    <TypeScriptCompile Include="ts\models\Uploading.ts" />
+    <TypeScriptCompile Include="ts\models\Uploaded.ts" />
+    <TypeScriptCompile Include="ts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="ts\utility\AttachType.ts" />
+    <TypeScriptCompile Include="ts\utility\Validator.ts" />
+    <TypeScriptCompile Include="ts\app.ts" />
+    <TypeScriptCompile Include="ts\_references.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201702270810436_imagesinfo.resx">
+      <DependentUpon>201702270810436_imagesinfo.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES6</TypeScriptTarget>
+    <TypeScriptOutFile>js/application.js</TypeScriptOutFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">

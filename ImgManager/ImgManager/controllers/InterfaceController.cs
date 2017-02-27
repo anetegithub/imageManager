@@ -12,5 +12,11 @@ namespace ImgManager.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult Template(string name)
+        {
+            return View("~/views/templates/" + name + ".cshtml");
+        }
     }
 }

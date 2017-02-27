@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ImgManager;
 using ImgManager.Controllers;
 
-namespace ImgManager.Tests.Controllers
+namespace ImgManager.Tests.controllers
 {
     [TestClass]
     public class HomeControllerTest

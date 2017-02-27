@@ -1,0 +1,10 @@
+﻿.fullsize {
+    width:100%;
+}
+.btn-small {
+    height:20px !important;
+    line-height:20px !important;
+}
+nav {
+    background-color:#26a634;
+}

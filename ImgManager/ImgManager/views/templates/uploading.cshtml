@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+}
+<div class="row">
+    <h1 class="col s12 m8">Uploading</h1>
+</div>
+<div class="row">
+    <div class="col s12">You want to go <button data-model-action="back" class="btn btn-small">back</button>?</div>
+</div>
+<hr />
+<div class="row">
+    <div class="col m10 s12">
+        <div class="file-field input-field">
+            <div class="btn">
+                <span>Files</span>
+                <form enctype="multipart/form-data">
+                    <input name="file" type="file" multiple />
+                </form>
+            </div>
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" placeholder="Upload one or more files">
+            </div>
+        </div>
+    </div>
+    <div class="col m2 s12">
+        <div class="file-field input-field">
+            <button type="submit" class="btn fullsize"><i style="font-size: 2.5em;-moz-transform: rotate(180deg); -ms-transform: rotate(180deg); -o-transform: rotate(180deg); -webkit-transform: rotate(180deg); transform: rotate(180deg);" class="material-icons">play_for_work</i></button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col s12">
+        <div class="progress">
+            <div class="determinate" title="progress" style="width: 0%"></div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="image-grid"></div>

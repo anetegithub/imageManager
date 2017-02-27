@@ -1,0 +1,16 @@
+﻿@{
+    Layout = null;
+    int q = 0;
+}
+@for (int i = 0; i < 3; i++)
+{
+    <div class="row">
+        @for (int j = 0; j < 3; j++)
+        {
+            <div class="col s12 m4">
+                {{@q}}
+            </div>
+            q++;
+        }
+    </div>
+}
