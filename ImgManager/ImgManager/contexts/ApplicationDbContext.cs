@@ -9,6 +9,11 @@ namespace ImgManager.contexts
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext()
+            : base("DefaultConnection")
+        {
+
+        }
         public DbSet<ImageInfo> InfromationAboutImages { get; set; }
     }
 }

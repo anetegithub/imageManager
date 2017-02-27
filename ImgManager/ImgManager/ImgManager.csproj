@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;Azure</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -163,10 +163,32 @@
     <None Include="js\jquery-3.1.1.intellisense.js" />
     <Content Include="images\error.png" />
     <Content Include="images\example.png" />
+    <Content Include="js\application.js" />
     <Content Include="js\jquery-3.1.1.js" />
     <Content Include="js\_references.js" />
     <Content Include="css\materialize.css" />
     <Content Include="js\materialize.js" />
+    <Content Include="ts\abstract\Binding.js" />
+    <Content Include="ts\abstract\HtmlPusher.js" />
+    <Content Include="ts\abstract\Request.js" />
+    <Content Include="ts\abstract\ServerLinked.js" />
+    <Content Include="ts\abstract\TemplateLoader.js" />
+    <Content Include="ts\abstract\ValidationState.js" />
+    <Content Include="ts\abstract\ViewModel.js" />
+    <Content Include="ts\account.js" />
+    <Content Include="ts\app.js" />
+    <Content Include="ts\bindings\NavBinding.js" />
+    <Content Include="ts\bindings\TransactionsBinding.js" />
+    <Content Include="ts\interfaces\jqueryPromise.js" />
+    <Content Include="ts\interfaces\Materialize.js" />
+    <Content Include="ts\interfaces\string.js" />
+    <Content Include="ts\models\Dashboard.js" />
+    <Content Include="ts\models\Identity.js" />
+    <Content Include="ts\models\RegisterIdentity.js" />
+    <Content Include="ts\models\Transactions.js" />
+    <Content Include="ts\utility\AttachType.js" />
+    <Content Include="ts\utility\Validator.js" />
+    <None Include="ts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -181,6 +203,28 @@
     <Content Include="views\templates\image-grid.cshtml" />
     <Content Include="views\templates\paging.cshtml" />
     <Content Include="views\templates\storage.cshtml" />
+    <None Include="Properties\PublishProfiles\imagefilemanager.pubxml" />
+    <Content Include="ts\abstract\Binding.js.map" />
+    <Content Include="ts\abstract\HtmlPusher.js.map" />
+    <Content Include="ts\abstract\Request.js.map" />
+    <Content Include="ts\abstract\ServerLinked.js.map" />
+    <Content Include="ts\abstract\TemplateLoader.js.map" />
+    <Content Include="ts\abstract\ValidationState.js.map" />
+    <Content Include="ts\abstract\ViewModel.js.map" />
+    <Content Include="ts\account.js.map" />
+    <Content Include="ts\app.js.map" />
+    <Content Include="ts\bindings\NavBinding.js.map" />
+    <Content Include="ts\bindings\TransactionsBinding.js.map" />
+    <Content Include="ts\interfaces\jqueryPromise.js.map" />
+    <Content Include="ts\interfaces\Materialize.js.map" />
+    <Content Include="ts\interfaces\string.js.map" />
+    <Content Include="ts\models\Dashboard.js.map" />
+    <Content Include="ts\models\Identity.js.map" />
+    <Content Include="ts\models\RegisterIdentity.js.map" />
+    <Content Include="ts\models\Transactions.js.map" />
+    <Content Include="ts\utility\AttachType.js.map" />
+    <Content Include="ts\utility\Validator.js.map" />
+    <Content Include="ts\_references.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -209,13 +253,19 @@
     <Content Include="fonts\roboto\Roboto-Thin.woff2" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\201702270810436_imagesinfo.resx">
+      <DependentUpon>201702270810436_imagesinfo.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="ts\abstract\Binding.ts" />
     <TypeScriptCompile Include="ts\abstract\HtmlPusher.ts" />
     <TypeScriptCompile Include="ts\abstract\Request.ts" />
-    <TypeScriptCompile Include="ts\abstract\Binding.ts" />
     <TypeScriptCompile Include="ts\abstract\ServerLinked.ts" />
     <TypeScriptCompile Include="ts\abstract\TemplateLoader.ts" />
     <TypeScriptCompile Include="ts\abstract\ValidationState.ts" />
     <TypeScriptCompile Include="ts\abstract\ViewModel.ts" />
+    <TypeScriptCompile Include="ts\app.ts" />
     <TypeScriptCompile Include="ts\bindings\GlobalBindings.ts" />
     <TypeScriptCompile Include="ts\bindings\ServerTimeBinding.ts" />
     <TypeScriptCompile Include="ts\bindings\UploadedImagesBinding.ts" />
@@ -226,20 +276,18 @@
     <TypeScriptCompile Include="ts\interfaces\jqueryPromise.ts" />
     <TypeScriptCompile Include="ts\interfaces\Materialize.ts" />
     <TypeScriptCompile Include="ts\interfaces\string.ts" />
-    <TypeScriptCompile Include="ts\models\Paging.ts" />
-    <TypeScriptCompile Include="ts\models\ChangeStorage.ts" />
-    <TypeScriptCompile Include="ts\models\Uploading.ts" />
+    <TypeScriptCompile Include="ts\models\ChangeStorage.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ts\models\Paging.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ts\models\Uploaded.ts" />
+    <TypeScriptCompile Include="ts\models\Uploading.ts" />
     <TypeScriptCompile Include="ts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="ts\utility\AttachType.ts" />
     <TypeScriptCompile Include="ts\utility\Validator.ts" />
-    <TypeScriptCompile Include="ts\app.ts" />
     <TypeScriptCompile Include="ts\_references.ts" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201702270810436_imagesinfo.resx">
-      <DependentUpon>201702270810436_imagesinfo.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
